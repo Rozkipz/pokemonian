@@ -7,9 +7,9 @@ from sqlalchemy.exc import NoResultFound
 
 engine = create_engine(os.environ.get('DB_CONN'))
 
-# Grim hack to get the imports working with crawler and main
-# Split poke models and other common functions out into a separate package the api+crawler can share.
-# After split crawler code out into a separate part of the repo and create an individual Docker image for it.
+# Grim hack to get the imports working with crawler and main.
+# TODO: Split poke models and other common functions out into a separate package the api+crawler can share.
+# TODO: After split crawler code out into a separate part of the repo and create an individual Docker image for it.
 
 try:
     from poke.poke_model import pokemon as pokemon_model
@@ -54,14 +54,14 @@ def upsert_pokemon(pokemon: Union[pokemon_model, list[pokemon_model]]) -> None:
     """
     with Session(engine) as session:
         if isinstance(pokemon, list):
-            # todo add bulk inserts
+            # TODO:  add bulk inserts
             raise NotImplementedError
 
         p = session.exec(select(pokemon_model).where(pokemon_model.id == pokemon.id))
 
         try:
             p.one()  # see if there was a result for that poke_id
-            # TODO Only update if the values are different than in the DB.
+            # TODO: Only update if the values are different than in the DB.
             update(pokemon_model).where(pokemon_model.id == pokemon.id).values(pokemon.__dict__)
         except NoResultFound:
             session.add(pokemon)

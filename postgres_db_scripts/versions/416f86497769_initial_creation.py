@@ -16,15 +16,10 @@ down_revision = None
 branch_labels = None
 depends_on = None
 
-import os
-print(os.environ.get('DB_CONN'))
-
 
 def upgrade():
-    print(os.environ.get('DB_CONN'))
     from poke.poke_model import pokemon  # Import this here as it is needed by the create_all call below.
     SQLModel.metadata.create_all(engine)
-    print('done')
 
 
 def downgrade():

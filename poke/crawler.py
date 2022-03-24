@@ -68,7 +68,7 @@ class UpdatePokemon(object):
             else:
                 logging.info(f"Finished retrieving pokemon. Retrieved {len(pokemon_to_add)} total pokemon.")
 
-        # TODO Add them as a batch
+        # TODO: Add them as a batch
         # Add the pokemon objs to the DB.
         # for each_poke in pokemon_to_add:
             # upsert_pokemon(each_poke)
@@ -84,8 +84,6 @@ if __name__ == "__main__":
 
     logging.debug(f"REQUEST_BACKOFF_IN_SECONDS: {REQUEST_BACKOFF_IN_SECONDS}")
     logging.debug(f"TOTAL_POKEMON_TO_STORE: {TOTAL_POKEMON_TO_STORE}")
-
-    logging.info('Running.')
 
     update = UpdatePokemon()
 

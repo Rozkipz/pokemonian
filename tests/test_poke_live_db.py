@@ -15,7 +15,7 @@ class TestInterfaces(unittest.TestCase):
             self.pokes[i] = pokemon_model(id=i, name=f"testamon_the_{i}", url=f"random.url/{i}")
 
     def test_insert_get(self):
-        # Todo: split this into two tests, one to insert and one to get.
+        # TODO: split this into two tests, one to insert and one to get.
         database_interface.upsert_pokemon(self.pokes.get(1))
         db_poke = database_interface.get_pokemon(self.pokes.get(1).id)
 
