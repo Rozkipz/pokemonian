@@ -1,0 +1,57 @@
+services:
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  create_table:
+    container_name: create_table
+    environment:
+      - DB_CONN=$DB_CONN
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    command:
+      - poetry run alembic upgrade head
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+
+  web:
+    container_name: web
+    environment:
+      - DB_CONN=$DB_CONN
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/code
+    command:
+      - poetry run uvicorn poke.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - create_table
+
+  crawler:
+    container_name: crawler
+    environment:
+      - DEBUG=$DEBUG
+      - DB_CONN=$DB_CONN
+      - REQUEST_BACKOFF_IN_SECONDS=0
+      - TOTAL_POKEMON_TO_STORE=50
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    command:
+      - poetry run python /code/poke/crawler.py
+    volumes:
+      - .:/code
+    depends_on:
+      - create_table

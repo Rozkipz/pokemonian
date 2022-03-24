@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "pokeAPI"
+version = "0.1.0"
+description = "Api for getting Pokemon."
+exclude = ["tests/__pycache__"]
+authors = ["Rowan"]
+
+[tool.poetry.dependencies]
+uvicorn = "0.17.5"
+python = "3.9.*"
+fastapi = "0.75.0"
+sqlmodel = "^0.0.6"
+PyMySQL = "^1.0.2"
+alembic = "^1.7.6"
+psycopg2-binary = "2.9.3"
+requests = "^2.27.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.3"
+pytest-docker-tools = "1.0.3"
+
+[build-system]
+requires = ["poetry>=1.0, poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+processor = "poke.main:app"
