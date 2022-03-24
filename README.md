@@ -14,7 +14,7 @@ You will also need Docker and docker-compose to be able to run Pokemonian.
 Once the crawler has populated the DB, you can access the api with:
 * `curl -L 0.0.0.0:8000/pokemon/` - Gets a redirect to `/pokemon/random/` and gets a random pokemon.
 * `curl -L 0.0.0.0:8000/pokemon/{id}` - Gets a specific pokemon.
-* `curl -d '{"id":10000, "name":"randomamon", "url":"get.pokemon/10000"}' -H "Content-Type: application/json" -X POST http://0.0.0.0:8000/pokemon` - This creates a new pokemon with the data passed in from the json. The keys must match the pokemon model object.
+* `curl -d '{"id":10000, "name":"randomamon", "url":"randomurl"}' -H "Content-Type: application/json" -X POST http://0.0.0.0:8000/pokemon` - This creates a new pokemon with the data passed in from the json. The keys must match the pokemon model object.
 
 Development: 
 * `just debug` - Runs the crawler and API, and the crawler will output debug logs.
@@ -23,6 +23,13 @@ Development:
 * `just _remove_postgres_db` - Delete the contents of the DB (including the table).
 
 ---
+### Server:
+![server](server.gif "server")
+### Client:
+![client](client.gif "client")
+
+---
+
 
 Database schema:
 

@@ -56,6 +56,9 @@ class UpdatePokemon(object):
 
                 # Add the new pokemon obj to a list to be upserted to the db later
                 pokemon_to_add.append(pokemon)
+
+                # Insert them into the DB as we get them. Makes for easier testing than waiting to crawl all pokemon. See TODO below
+                upsert_pokemon(pokemon)
                 logging.debug(f"Got pokemon: {pokemon}")
 
             if res.get('next'):
@@ -65,10 +68,10 @@ class UpdatePokemon(object):
             else:
                 logging.info(f"Finished retrieving pokemon. Retrieved {len(pokemon_to_add)} total pokemon.")
 
+        # TODO Add them as a batch
         # Add the pokemon objs to the DB.
-        for each_poke in pokemon_to_add:
-            # TODO Add them as a batch
-            upsert_pokemon(each_poke)
+        # for each_poke in pokemon_to_add:
+            # upsert_pokemon(each_poke)
 
         logging.info("Successfully updated pokemon.", extra={"pokemon": pokemon_to_add})
 
