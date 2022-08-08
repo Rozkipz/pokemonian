@@ -36,7 +36,83 @@ In addition to what I've mentioned above, I would also do a few other things on 
 
 - Add black pre-commit hook enforcement
 - Add mypy pre-commit hook enforcement
-- Restructure the repo a bit more, moving out the crawler code into its own microservice, and creating a common pokemon model package.
+- Restructure the repo a bit more, moving out the crawler code into its own microservice, and creating a common Pokemon model package.
 - I'd modify the dockerfiles after separating the two services, and create multi-stage builds to house a testing environment for each.
 - Async the FastAPI and SQLAlchemy code for better performance.
 - Develop a git branching strategy and implement a stronger merging process.
+
+### SQL improvements
+
+For an initial design I created a single Pokemon table and kept some of the data returned from the API there, but if I were to expand the project and store more data, I'd split the database up into several tables that would be linked together using keys.
+
+#### Initial DB schema
+
+##### Pokemon
+| field   | type          |
+|:--------|:--------------|
+| id (PK) | int           |
+| name    | str           |
+| url     | str           |
+| height  | optional(int) |
+| weight  | optional(int) |
+| speed   | optional(int) |
+
+#### Proposed new design
+One way to eliminate the optional attributes (because they don't get populated in the model until after the call to the URL), you could create a single table with just the metadata on the Pokemon, and a table that stores the information on that Pokemon that is retrieved by the API after the initial get:
+
+##### poke_meta
+| field   | type          |
+|:--------|:--------------|
+| id (PK) | int           |
+| url     | str           |
+
+##### poke_info 
+| field   | type          |
+|:--------|:--------------|
+| id (FK) | poke_meta.id  |
+| name    | str           |
+| height  | int           |
+| weight  | int           |
+| speed   | int           |
+
+Although this fixes the optional fields in the DB, this creates a messier design that is harder to follow through. The cleaner way to fix this issue would be to configure SQLModel to only have an optional parameter for the model and not the DB field, or to create the model after getting all information on the Pokemon, and to keep the original DB design.
+
+If we were going to expand the project to also hold something that was in a many-to-many relationship with a Pokemon, for example attacks that Pokemon can perform, then you'd need to create a bridging table between attacks and Pokemon. I also created a simple ENUM to correspond to the types of attacks that Pokemon might have.
+
+##### type_ENUM
+|:------|
+| Air   | 
+| Water |
+| Fire  | 
+| Earth |
+
+##### pokemon
+| field   | type          |
+|:--------|:--------------|
+| id (PK) | int           |
+| name    | str           |
+| url     | str           |
+| type    | type_ENUM     |
+| height  | int           |
+| weight  | int           |
+| speed   | int           |
+
+##### attacks
+
+| field   | type          |
+|:--------|:--------------|
+| id (PK) | int           |
+| name    | str           |
+| type    | type_ENUM     |
+
+##### pokemon_attacks
+| field          | type          |
+|:---------------|:--------------|
+| poke_id (FK)   | int           |
+| attack_id (FK) | int           |
+| attack_slot    | int           |
+
+PRIMARY KEY (poke_id, attack_slot)
+// As Pokemon can only have one attack in each slot, we can make the composite key based on that, with the assumption that a Pokemon can have multiple of the same attack in different slots.
+
+Using a bridging table in this way allows for both Pokemon and Attacks to be created and stored only once each, and easily associated with each other using the pokemon_attacks table.
