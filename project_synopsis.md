@@ -47,7 +47,7 @@ For an initial design I created a single Pokemon table and kept some of the data
 
 #### Initial DB schema
 
-##### Pokemon
+`Pokemon`
 | field   | type          |
 |:--------|:--------------|
 | id (PK) | int           |
@@ -60,13 +60,13 @@ For an initial design I created a single Pokemon table and kept some of the data
 #### Proposed new design
 One way to eliminate the optional attributes (because they don't get populated in the model until after the call to the URL), you could create a single table with just the metadata on the Pokemon, and a table that stores the information on that Pokemon that is retrieved by the API after the initial get:
 
-##### poke_meta
+`poke_meta`
 | field   | type          |
 |:--------|:--------------|
 | id (PK) | int           |
 | url     | str           |
 
-##### poke_info 
+`poke_info`
 | field   | type          |
 |:--------|:--------------|
 | id (FK) | poke_meta.id  |
@@ -79,14 +79,15 @@ Although this fixes the optional fields in the DB, this creates a messier design
 
 If we were going to expand the project to also hold something that was in a many-to-many relationship with a Pokemon, for example attacks that Pokemon can perform, then you'd need to create a bridging table between attacks and Pokemon. I also created a simple ENUM to correspond to the types of attacks that Pokemon might have.
 
-##### type_ENUM
-|:------|
+`type_ENUM`
+| type  |
+|-------|
 | Air   | 
 | Water |
 | Fire  | 
 | Earth |
 
-##### pokemon
+`pokemon`
 | field   | type          |
 |:--------|:--------------|
 | id (PK) | int           |
@@ -97,22 +98,22 @@ If we were going to expand the project to also hold something that was in a many
 | weight  | int           |
 | speed   | int           |
 
-##### attacks
-
+`attacks`
 | field   | type          |
 |:--------|:--------------|
 | id (PK) | int           |
 | name    | str           |
 | type    | type_ENUM     |
 
-##### pokemon_attacks
+`pokemon_attacks`
 | field          | type          |
 |:---------------|:--------------|
 | poke_id (FK)   | int           |
 | attack_id (FK) | int           |
 | attack_slot    | int           |
 
-PRIMARY KEY (poke_id, attack_slot)
-// As Pokemon can only have one attack in each slot, we can make the composite key based on that, with the assumption that a Pokemon can have multiple of the same attack in different slots.
+`PRIMARY KEY (poke_id, attack_slot)`
+
+As Pokemon can only have one attack in each slot, we can make the composite key based on that, with the assumption that a Pokemon can have multiple of the same attack in different slots.
 
 Using a bridging table in this way allows for both Pokemon and Attacks to be created and stored only once each, and easily associated with each other using the pokemon_attacks table.
