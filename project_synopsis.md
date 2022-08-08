@@ -108,8 +108,8 @@ If we were going to expand the project to also hold something that was in a many
 `pokemon_attacks`
 | field          | type          |
 |:---------------|:--------------|
-| poke_id (FK)   | int           |
-| attack_id (FK) | int           |
+| poke_id (FK)   | pokemon.id    |
+| attack_id (FK) | attacks.id    |
 | attack_slot    | int           |
 
 `PRIMARY KEY (poke_id, attack_slot)`
